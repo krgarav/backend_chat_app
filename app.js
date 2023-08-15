@@ -1,8 +1,11 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const authRoute = require("./Routes/auth")
+const authRoute = require("./Routes/auth");
+const chatRoute = require("./Routes/chat");
 const sequelize = require("./Utils/database");
+const User =require("./Models/user");
+const Chat = require("./Models/chat");
 const app = express();
 app.use(cors({
     origin:"*",
@@ -11,8 +14,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/user/", authRoute);
+app.use(chatRoute);
 
-
+User.hasMany(Chat);
+Chat.belongsTo(User);
 sequelize
 // .sync({force:true})
 .sync()

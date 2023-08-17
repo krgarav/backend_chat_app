@@ -6,6 +6,8 @@ const chatRoute = require("./Routes/chat");
 const sequelize = require("./Utils/database");
 const User =require("./Models/user");
 const Chat = require("./Models/chat");
+const Grouptable = require("./Models/grouptable");
+const UserGroup = require("./Models/usergroup")
 const app = express();
 app.use(cors({
     origin:"*",
@@ -18,6 +20,16 @@ app.use(chatRoute);
 
 User.hasMany(Chat);
 Chat.belongsTo(User);
+
+// Grouptable.hasMany(User);
+// User.hasMany(Grouptable);
+Grouptable.hasMany(Chat);
+Chat.belongsTo(Grouptable);
+
+User.belongsToMany(Grouptable, { through: UserGroup });
+Grouptable.belongsToMany(User, { through: UserGroup });
+
+
 sequelize
 // .sync({force:true})
 .sync()

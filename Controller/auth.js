@@ -1,3 +1,4 @@
+const { Sequelize, Op } = require("sequelize");
 const User = require("../Models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -32,8 +33,8 @@ exports.authSignup = async (req, res) => {
 
 }
 
-const generateToken = (id,name) => {
-    return jwt.sign({ user_id: id,name:name }, "secrettoken");
+const generateToken = (id, name) => {
+    return jwt.sign({ user_id: id, name: name }, "secrettoken");
 }
 exports.authLogin = async (req, res) => {
     try {
@@ -67,5 +68,23 @@ exports.authLogin = async (req, res) => {
 
     } catch (err) {
         console.log(err);
+    }
+}
+
+exports.getAllUserName = async (req, res) => {
+    const userId = req.user.id
+    try {
+        const users = await User.findAll({
+            where: {
+                id: {
+                    [Op.notIn]: [userId]
+                }
+            },
+            attributes: ['id', 'name'] // Specify the attributes you want to retrieve
+        });
+        res.status(201).json({ user: users });
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({ message: "Something went wrong" });
     }
 }

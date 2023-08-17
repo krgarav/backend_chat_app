@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../Utils/database");
 
-const Chat = sequelize.define('chats', {
+const Grouptable = sequelize.define('groupTable', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -12,11 +12,7 @@ const Chat = sequelize.define('chats', {
         type: Sequelize.STRING,
         allowNull:false
     },
-    message: {
-        type: Sequelize.STRING,
-        allowNull:false
-    }
 
 });
 
-module.exports = Chat;
+module.exports = Grouptable;

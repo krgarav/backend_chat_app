@@ -108,11 +108,30 @@ exports.userGroupName = async (req, res) => {
 
 exports.allUserPresentInGroup = async (req, res) => {
     try {
+        const loggedUserId = req.user.id;
         const groupId = req.params.groupId;
-        const usersId = await UserGroup.findAll({ where: { groupTableId: groupId }, attributes: ['userId'] });
+        const usersId = await UserGroup.findAll({ where: { groupTableId: groupId }, attributes: ['userId', 'isAdmin'] });
+
         const userIDs = usersId.map(entry => entry.userId);
         const userNames = await User.findAll({ where: { id: { [Op.in]: userIDs } }, attributes: ['id', 'name'] });
-        res.status(200).json({ allUserIds: userNames });
+        const userIdToNameMap = {};
+        userNames.forEach(user => {
+            userIdToNameMap[user.id] = user.name;
+        });
+        const response = usersId.map(entry => {
+            return {
+                id: entry.userId,
+                name: userIdToNameMap[entry.userId],
+                isAdmin: entry.isAdmin,
+            };
+        });
+        let adminStatus = false;
+        for (const item of response) {
+            if (item.id === loggedUserId && item.isAdmin === true) {
+                adminStatus = true
+            }
+        }
+        res.status(200).json({ allUserIds: response, isAdminUser: adminStatus });
     } catch (err) {
         console.log(err);
     }
@@ -126,5 +145,29 @@ exports.getGroupChats = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error occured" });
+    }
+}
+
+exports.updateGroupInfo = async (req, res) => {
+    try {
+        const groupId = req.body.groupId;
+        const changedName = req.body.name;
+        const removeUsersId = req.body.users;
+        const makeAdmin = req.body.isAdmin;
+        if (changedName) {
+           
+            const group = await GroupTable.findOne({ where: { id: groupId } });
+            group.name = changedName;
+            await group.save();
+        }
+        const allUsers = await UserGroup.findAll({ where: { groupTableId: groupId, userId: removeUsersId } });
+        for (const usergroup of allUsers) {
+            await usergroup.destroy();
+        }
+        await UserGroup.update({ isAdmin: true }, { where: { groupTableId: groupId, userId: makeAdmin } });
+        res.status(200).json({ message: "Updated GroupInfo" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "error occured" });
     }
 }

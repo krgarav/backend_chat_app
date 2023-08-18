@@ -155,7 +155,6 @@ exports.updateGroupInfo = async (req, res) => {
         const removeUsersId = req.body.users;
         const makeAdmin = req.body.isAdmin;
         if (changedName) {
-           
             const group = await GroupTable.findOne({ where: { id: groupId } });
             group.name = changedName;
             await group.save();

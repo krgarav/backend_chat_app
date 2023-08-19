@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require("path");
 const dotenv = require("dotenv");
 const authRoute = require("./Routes/auth");
 const chatRoute = require("./Routes/chat");
@@ -15,7 +16,7 @@ dotenv.config();
 app.use(cors({
     origin: '*',  // Allow requests from this origin
     methods: ['OPTIONS', 'POST', 'GET', 'DELETE'], // Allow these HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorisation'],  // Allow these headers
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Allow these headers
 }));
 
 app.use((req, res, next) => {

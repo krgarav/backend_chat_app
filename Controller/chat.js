@@ -7,8 +7,9 @@ exports.postMessage = async (req, res) => {
     try {
         const enteredMessage = req.body.message;
         const groupId = req.body.groupId;
-        await req.user.createChat({ message: enteredMessage, name: req.user.name, groupTableId: groupId });
-        res.status(200).json({ message: "Message stored successfully" });
+        const response = await req.user.createChat({ message: enteredMessage, name: req.user.name, groupTableId: groupId });
+        // console.log(response);
+        res.status(200).json({ message: "Message stored successfully", data: response });
     } catch (err) {
         res.status(500).json({ message: "Message storation failed" });
         console.log(err)

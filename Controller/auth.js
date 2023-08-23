@@ -55,6 +55,7 @@ exports.authLogin = async (req, res) => {
                     res.status(200).json({
                         data: "user successfully logged in",
                         token: generateToken(userExists.id, userExists.name),
+                        userId:userExists.id
                     });
 
                 } else {

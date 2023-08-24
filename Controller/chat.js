@@ -2,13 +2,17 @@ const Chats = require("../Models/chat");
 const { Sequelize, Op } = require("sequelize");
 const User = require("../Models/user");
 const GroupTable = require("../Models/grouptable");
-const UserGroup = require("../Models/usergroup")
+const UserGroup = require("../Models/usergroup");
+const S3services = require("../Services/s3services");
+// const multer = require("multer");
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 exports.postMessage = async (req, res) => {
     try {
         const enteredMessage = req.body.message;
         const groupId = req.body.groupId;
-        const response = await req.user.createChat({ message: enteredMessage, name: req.user.name, groupTableId: groupId });
-        // console.log(response);
+        const fileUrl = req.body.fileUrl;
+        const response = await req.user.createChat({ message: enteredMessage, name: req.user.name, fileUrl, groupTableId: groupId });
         res.status(200).json({ message: "Message stored successfully", data: response });
     } catch (err) {
         res.status(500).json({ message: "Message storation failed" });
@@ -170,4 +174,16 @@ exports.updateGroupInfo = async (req, res) => {
         console.log(err);
         res.status(500).json({ message: "error occured" });
     }
+}
+
+exports.uploadfile = async (req, res) => {
+    try {
+        const uploadedFile = req.file;
+        const fileName = uploadedFile.originalname;
+        const fileURL = await S3services.uploadToS3(uploadedFile.buffer, fileName);
+        res.status(200).json({ data: fileURL });
+    } catch (err) {
+        console.log(err);
+    }
+
 }

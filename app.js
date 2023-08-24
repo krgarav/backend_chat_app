@@ -71,7 +71,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(express.urlencoded())
 
 app.use("/user/", authRoute);
 app.use(chatRoute);

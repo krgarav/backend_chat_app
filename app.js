@@ -10,6 +10,7 @@ const chatRoute = require("./Routes/chat");
 const sequelize = require("./Utils/database");
 const User = require("./Models/user");
 const Chat = require("./Models/chat");
+const Archive = require("./Models/archiveTable");
 const Grouptable = require("./Models/grouptable");
 const UserGroup = require("./Models/usergroup");
 const app = express();
@@ -28,39 +29,21 @@ const io = socketIo(server, {
 io.on('connection', (socket) => {
     console.log('A client connected to socket.io', socket.id);
 
-    // socket.on('setup', (userToken) => {
-    //     socket.join(userToken);
-    //     socket.emit("connection");
-
-    // });
-
-    // socket.on('join chat', (room) => {
-    //     socket.join(room);
-    //     // console.log("user joined room ===================" + room)
-    // })
-
     socket.on('new message', (obj) => {
-        // let alluser = obj.usersPresent;
+      io.emit("message received", obj)
+    });
 
-
-        // if (!chat) return
-
-        io.emit("message received", obj)
-        // alluser.forEach(user => {
-        //     if (user.id === message.userId) return
-        //     console.log(user.id)
-        //     socket.in(user.id).emit("message received", message);
-        // });
-
-
+    socket.on("group create",(obj)=>{
+      const userIds=  obj.userInfo.map(item => item.id);
+        io.emit("group created", obj);
     })
-    // Handle Socket.IO events here
+ 
 });
-
+require("./Cron/cron");
 app.use(cors({
-    origin: '*',  // Allow requests from this origin
-    methods: ['OPTIONS', 'POST', 'GET', 'DELETE'], // Allow these HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'],  // Allow these headers
+    origin: '*',  
+    methods: ['OPTIONS', 'POST', 'GET', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'],  
 }));
 
 app.use((req, res, next) => {
@@ -82,8 +65,14 @@ app.use((req, res) => {
 User.hasMany(Chat);
 Chat.belongsTo(User);
 
+User.hasMany(Archive);
+Archive.belongsTo(User);
+
 Grouptable.hasMany(Chat);
 Chat.belongsTo(Grouptable);
+
+Grouptable.hasMany(Archive);
+Archive.belongsTo(Grouptable);
 
 User.belongsToMany(Grouptable, { through: UserGroup });
 Grouptable.belongsToMany(User, { through: UserGroup });

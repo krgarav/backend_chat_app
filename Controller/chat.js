@@ -4,9 +4,7 @@ const User = require("../Models/user");
 const GroupTable = require("../Models/grouptable");
 const UserGroup = require("../Models/usergroup");
 const S3services = require("../Services/s3services");
-// const multer = require("multer");
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
+
 exports.postMessage = async (req, res) => {
     try {
         const enteredMessage = req.body.message;
@@ -69,7 +67,8 @@ exports.createGroup = async (req, res) => {
                 userId: userId
             });
         }
-        res.status(200).json({ message: "Successfully added" });
+        // await UserGroup.findAll({gro})
+        res.status(200).json({ message: "Successfully added", data: group });
     } catch (err) {
         console.log(err);
         res.status(404).json({ message: "Error Occured" });

@@ -10,7 +10,8 @@ exports.postMessage = async (req, res) => {
         const enteredMessage = req.body.message;
         const groupId = req.body.groupId;
         const fileUrl = req.body.fileUrl;
-        const response = await req.user.createChat({ message: enteredMessage, name: req.user.name, fileUrl, groupTableId: groupId });
+        const receiverId = req.body.receiverId;
+        const response = await req.user.createChat({ message: enteredMessage, name: req.user.name, fileUrl, groupTableId: groupId, receiverId });
         res.status(200).json({ message: "Message stored successfully", data: response });
     } catch (err) {
         res.status(500).json({ message: "Message storation failed" });
@@ -21,8 +22,9 @@ exports.postMessage = async (req, res) => {
 exports.getMessage = async (req, res) => {
     const lastMessageId = +req.query.lastMessageId;
     const groupId = JSON.parse(req.query.groupId);
+    const receiverId = +req.query.receiverId;
     try {
-        if (lastMessageId === 1) {
+        if (lastMessageId === 1 && groupId) {
             const pageSize = 10; // Number of results per page
             const totalRows = await Chats.count();
             const offset = Math.max(totalRows - pageSize, 0); // Ensure offset is not negative
@@ -32,18 +34,56 @@ exports.getMessage = async (req, res) => {
                 },
             });
             res.status(200).json({ chats: chats });
-        } else {
+        } else if (groupId !== null) {
             const chats = await Chats.findAll({
                 where: {
                     id: {
                         [Sequelize.Op.gt]: lastMessageId
                     },
-                    groupTableId: groupId
+                    groupTableId: null,
+                    userId: !req.user.id,
+
                 },
                 order: [['id', 'ASC']],
                 limit: 100 // Adjust the limit to your preferred batch size
             });
             res.status(200).json({ chats: chats })
+        }
+        else {
+            const sendchats = await Chats.findAll({
+                where: {
+                    id: {
+                        [Sequelize.Op.gt]: lastMessageId
+                    },
+                    groupTableId: null,
+                    receiverId: receiverId,
+                    userId: req.user.id
+                },
+                order: [['id', 'ASC']],
+                limit: 100 // Adjust the limit to your preferred batch size
+            });
+            const receivechats = await Chats.findAll({
+                where: {
+                    id: {
+                        [Sequelize.Op.gt]: lastMessageId
+                    },
+                    groupTableId: null,
+                    receiverId: req.user.id,
+                    userId: receiverId
+                },
+                order: [['id', 'ASC']],
+                limit: 100 // Adjust the limit to your preferred batch size
+            });
+            // Combine both sets of chats into one array
+            const allChats = [...sendchats, ...receivechats];
+
+            // Sort the combined array by chat ID in ascending order
+            allChats.sort((a, b) => a.id - b.id);
+
+            console.log(receiverId, req.user.id);
+            console.log(groupId)
+
+            res.status(200).json({ chats: allChats })
         }
     } catch (err) {
         res.status(404).json({ message: "data not found" });

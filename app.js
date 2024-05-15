@@ -30,20 +30,20 @@ io.on('connection', (socket) => {
     console.log('A client connected to socket.io', socket.id);
 
     socket.on('new message', (obj) => {
-      io.emit("message received", obj)
+        io.emit("message received", obj)
     });
 
-    socket.on("group create",(obj)=>{
-      const userIds=  obj.userInfo.map(item => item.id);
+    socket.on("group create", (obj) => {
+        const userIds = obj.userInfo.map(item => item.id);
         io.emit("group created", obj);
     })
- 
+
 });
-require("./Cron/cron");
+// require("./Cron/cron");
 app.use(cors({
-    origin: '*',  
-    methods: ['OPTIONS', 'POST', 'GET', 'DELETE'], 
-    allowedHeaders: ['Content-Type', 'Authorization'],  
+    origin: '*',
+    methods: ['OPTIONS', 'POST', 'GET', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use((req, res, next) => {

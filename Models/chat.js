@@ -8,16 +8,16 @@ const Chat = sequelize.define('chats', {
         allowNull: false,
         primaryKey: true
     },
-    name:{
+    name: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
     },
     message: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
     },
-    fileUrl:{type: Sequelize.STRING}
-
+    fileUrl: { type: Sequelize.STRING },
+    receiverId: { type: Sequelize.INTEGER }
 });
 
 module.exports = Chat;

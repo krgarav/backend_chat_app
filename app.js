@@ -16,6 +16,7 @@ const UserGroup = require("./Models/usergroup");
 const app = express();
 const server = http.createServer(app);
 const builtPath = path.join(__dirname, "../ChatAppFrontend/dist");
+const hostname = '0.0.0.0';
 dotenv.config();
 
 // Initialize Socket.IO server and listen for connections
@@ -82,7 +83,7 @@ sequelize
     // .sync({force:true})
     .sync()
     .then(() => {
-        server.listen(process.env.PORT || 5000, () => {
+        server.listen(process.env.PORT || 5000, hostname, () => {
             console.log("Server is running on port 5000");
         })
     });

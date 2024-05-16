@@ -80,9 +80,6 @@ exports.getMessage = async (req, res) => {
             // Sort the combined array by chat ID in ascending order
             allChats.sort((a, b) => a.id - b.id);
 
-            console.log(receiverId, req.user.id);
-            console.log(groupId)
-
             res.status(200).json({ chats: allChats })
         }
     } catch (err) {

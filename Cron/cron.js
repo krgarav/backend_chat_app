@@ -42,7 +42,7 @@ async function copyData() {
     }
 }
 
-const cron = require('node-cron');
-cron.schedule('0 0 * * *', () => {  // runs at every midnight
-    copyData()
-})
+// const cron = require('node-cron');
+// cron.schedule('0 0 * * *', () => {  // runs at every midnight
+//     copyData()
+// })

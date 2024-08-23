@@ -15,7 +15,6 @@ const Grouptable = require("./Models/grouptable");
 const UserGroup = require("./Models/usergroup");
 const app = express();
 const server = http.createServer(app);
-const builtPath = path.join(__dirname, "../ChatAppFrontend/dist");
 dotenv.config();
 
 // Initialize Socket.IO server and listen for connections
@@ -58,10 +57,10 @@ app.use(express.urlencoded())
 
 app.use("/user/", authRoute);
 app.use(chatRoute);
-app.use(express.static(builtPath));
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, "../ChatAppFrontend/dist/index.html"));
-})
+app.use(express.static(path.join(__dirname, 'dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
 User.hasMany(Chat);
 Chat.belongsTo(User);
 

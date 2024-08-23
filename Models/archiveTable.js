@@ -7,15 +7,15 @@ const Archive = sequelize.define('archive', {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
-        primaryKey:true
-        
+        primaryKey: true
+
     },
     name: {
         type: Sequelize.STRING,
         allowNull: false
     },
     message: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
     },
     fileUrl: { type: Sequelize.STRING }

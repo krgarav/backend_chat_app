@@ -10,16 +10,6 @@ dotenv.config();
 // });
 
 
-// Validate that env variables are loaded
-console.log("DB Config:", {
-    name: process.env.DB_NAME,
-    user: process.env.DBUSERNAME,
-    password: process.env.DBPASSWORD ? "****" : "MISSING",
-    host: process.env.DBHOSTNAME,
-    port: process.env.DBPORT || 26370
-});
-
-
 const caCertPath = path.join(__dirname, "../", "ca.pem");
 const caCert = fs.readFileSync(caCertPath);
 // Sequelize Configuration

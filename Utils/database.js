@@ -16,6 +16,7 @@ const caCert = fs.readFileSync(caCertPath);
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DBUSERNAME, process.env.DBPASSWORD, {
     host: process.env.DBHOSTNAME,
     dialect: 'mysql',
+    timezone: '+05:30',
     port: 26370,
     dialectOptions: {
         ssl: {

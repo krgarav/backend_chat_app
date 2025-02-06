@@ -13,8 +13,8 @@ const Chat = sequelize.define('chats', {
         allowNull: false
     },
     message: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.TEXT,
+        allowNull:false
     },
     fileUrl: { type: Sequelize.STRING },
     receiverId: { type: Sequelize.INTEGER }
